@@ -184,6 +184,9 @@ export default function SpotifyWidget() {
         // if there is no track, no guess is possible
         if (!track) return;
 
+        // no more guessing after a completed guess
+        if (guessCompleted) return;
+
         if (guess === "") setScore(0);
 
         const titleGuess = fuzzyGuess(guess, track.name);
