@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "yzhang.markdown-all-in-one",
+        "EditorConfig.EditorConfig"
+    ]
+}
