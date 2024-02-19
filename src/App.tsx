@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { Button, CssVarsProvider, Typography } from "@mui/joy";
 
-import { SPOTIFY_PLAYER_NAME } from "./config";
+import { BASE_URL, SPOTIFY_PLAYER_NAME } from "./config";
 
 import GameClient from "./components/GameClient";
 
@@ -25,7 +25,7 @@ export default function App() {
                     startDecorator={
                         <img
                             style={{ filter: "brightness(0) invert(1)" }}
-                            src="/spotify.png"
+                            src={`${BASE_URL}/spotify.png`}
                             width={24}
                         />
                     }
