@@ -126,8 +126,23 @@ export default function SpotifyWidget() {
         // Do not trigger a completed guess when its already
         if (guessCompleted) return;
 
-        setShow(found);
+        // Show track details, if no already displayed.
+        // Also delete the user input
+        if (found.title && !show.title) {
+            setShow({ ...found, title: true });
+            setGuess("");
+        }
+        if (found.album && !show.album) {
+            setShow({ ...found, album: true });
+            setGuess("");
+        }
+        if (found.artist && !show.artist) {
+            setShow({ ...found, artist: true });
+            setGuess("");
+        }
 
+        // Check if the guess was completed or not
+        // based on the settings
         if (settings.guessSuccess.name && !found.title) {
             setGuessCompleted(false);
             return;
@@ -143,6 +158,7 @@ export default function SpotifyWidget() {
             return;
         }
 
+        // Guess was completed, show confetti and go to the next song
         setGuessCompleted(true);
 
         showConfetti();
