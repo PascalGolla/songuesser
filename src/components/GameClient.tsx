@@ -92,6 +92,37 @@ export default function SpotifyWidget() {
     };
 
     /**
+     * Checks the user input if the guess is part of the track information
+     */
+    const checkGuess = () => {
+        if (!track) return;
+
+        const titleGuess = fuzzyGuess(guess, track.name);
+        const albumGuess = fuzzyGuess(guess, track.album.name);
+        const artistGuess = fuzzyGuess(guess, track.artists[0].name);
+
+        setScore(titleGuess);
+
+        if (titleGuess >= NAME_THRESHOLD) {
+            setFound((old) => {
+                return { ...old, title: true };
+            });
+        }
+
+        if (albumGuess >= ALBUM_THRESHOLD) {
+            setFound((old) => {
+                return { ...old, album: true };
+            });
+        }
+
+        if (artistGuess >= ARTIST_THRESHOLD) {
+            setFound((old) => {
+                return { ...old, artist: true };
+            });
+        }
+    };
+
+    /**
      * When the track changes
      * - reset the found state
      * - reset the show state
@@ -194,7 +225,10 @@ export default function SpotifyWidget() {
 
     /**
      * Based on the user inputted guess, check if guess
-     * matches with the track
+     * matches with the track title
+     *
+     * Apply the score value of how close the user is to the
+     * correct name
      */
     useEffect(() => {
         // if there is no track, no guess is possible
@@ -204,30 +238,7 @@ export default function SpotifyWidget() {
         if (guessCompleted) return;
 
         if (guess === "") setScore(0);
-
-        const titleGuess = fuzzyGuess(guess, track.name);
-        const albumGuess = fuzzyGuess(guess, track.album.name);
-        const artistGuess = fuzzyGuess(guess, track.artists[0].name);
-
-        setScore(titleGuess);
-
-        if (titleGuess >= NAME_THRESHOLD) {
-            setFound((old) => {
-                return { ...old, title: true };
-            });
-        }
-
-        if (albumGuess >= ALBUM_THRESHOLD) {
-            setFound((old) => {
-                return { ...old, album: true };
-            });
-        }
-
-        if (artistGuess >= ARTIST_THRESHOLD) {
-            setFound((old) => {
-                return { ...old, artist: true };
-            });
-        }
+        setScore(fuzzyGuess(guess, track.name));
     }, [guess]);
 
     /**
@@ -286,6 +297,11 @@ export default function SpotifyWidget() {
                 color="neutral"
                 onChange={(e) => {
                     setGuess(e.currentTarget.value);
+                }}
+                onKeyDown={(e) => {
+                    if (e.key == "Enter") {
+                        checkGuess();
+                    }
                 }}
                 placeholder="Guess the song"
                 value={guess}
