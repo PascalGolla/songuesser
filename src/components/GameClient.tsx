@@ -8,11 +8,15 @@ import {
     SPOTIFY_REDIRECT_URL,
     SPOTIFY_SCOPES,
 } from "../config";
-import { guessTrack } from "../guess";
+import { fuzzyGuess } from "../guess";
 import { useSettings } from "../hooks/useSettings";
 import { useSpotify } from "../hooks/useSpotify";
 import InfoToast from "./InfoToast";
 import Player from "./Player";
+
+const NAME_THRESHOLD = 0.97;
+const ARTIST_THRESHOLD = 0.97;
+const ALBUM_THRESHOLD = 0.97;
 
 export default function SpotifyWidget() {
     const [api, player] = useSpotify(
@@ -182,27 +186,25 @@ export default function SpotifyWidget() {
 
         if (guess === "") setScore(0);
 
-        const res = guessTrack(guess, {
-            name: track.name,
-            album: track.album.name,
-            artist: track.artists[0].name,
-        });
+        const titleGuess = fuzzyGuess(guess, track.name);
+        const albumGuess = fuzzyGuess(guess, track.album.name);
+        const artistGuess = fuzzyGuess(guess, track.artists[0].name);
 
-        setScore(res.score);
+        setScore(titleGuess);
 
-        if (res.type == "name") {
+        if (titleGuess >= NAME_THRESHOLD) {
             setFound((old) => {
                 return { ...old, title: true };
             });
         }
 
-        if (res.type == "album") {
+        if (albumGuess >= ALBUM_THRESHOLD) {
             setFound((old) => {
                 return { ...old, album: true };
             });
         }
 
-        if (res.type == "artist") {
+        if (artistGuess >= ARTIST_THRESHOLD) {
             setFound((old) => {
                 return { ...old, artist: true };
             });
