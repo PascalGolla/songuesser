@@ -57,6 +57,10 @@ export default function SpotifyWidget() {
 
     const ref = useRef<HTMLDivElement>(null);
 
+    /**
+     * Skip to the next song, by first alerting the user with
+     * a toast and a 4s delay
+     */
     const skipToNext = () => {
         setNextSongToast(true);
 
@@ -72,11 +76,24 @@ export default function SpotifyWidget() {
     };
 
     /**
+     * Show confetti across the whole screen
+     */
+    const showConfetti = () => {
+        const jsConfetti = new JSConfetti();
+        jsConfetti
+            .addConfetti({ confettiRadius: 3, confettiNumber: 40 })
+            .then(() => {
+                jsConfetti.clearCanvas();
+            });
+    };
+
+    /**
      * When the track changes
      * - reset the found state
      * - reset the show state
      * - reset the guess score
      * - reset the guess input
+     * - reset the guess complete state
      *
      * so the guessing can begin again
      */
@@ -86,31 +103,8 @@ export default function SpotifyWidget() {
         setShow({ title: false, artist: false, album: false });
         setGuess("");
         setScore(0);
-    }, [track]);
-
-    /**
-     * Check if the guess is completed
-     *
-     * if so
-     * - show confetti
-     * - skip to the next track
-     */
-    useEffect(() => {
-        if (!guessCompleted) return;
-
-        const jsConfetti = new JSConfetti();
-        jsConfetti
-            .addConfetti({ confettiRadius: 3, confettiNumber: 40 })
-            .then(() => {
-                jsConfetti.clearCanvas();
-            });
-
-        // Skip to the next song
-        skipToNext();
-
-        // reset the state
         setGuessCompleted(false);
-    }, [guessCompleted]);
+    }, [track]);
 
     /**
      * When the found state changes, the user has successfully guessed
@@ -119,8 +113,15 @@ export default function SpotifyWidget() {
      * This effect:
      * - shows the guessed part of the track
      * - checks based on the settings, if the guess was completed
+     *
+     * If the guess completed:
+     * 1. show confetti
+     * 2. skip to the next song
      */
     useEffect(() => {
+        // Do not trigger a completed guess when its already
+        if (guessCompleted) return;
+
         setShow(found);
 
         if (settings.guessSuccess.name && !found.title) {
@@ -139,6 +140,9 @@ export default function SpotifyWidget() {
         }
 
         setGuessCompleted(true);
+
+        showConfetti();
+        skipToNext();
     }, [found]);
 
     /**
@@ -210,6 +214,14 @@ export default function SpotifyWidget() {
      */
     useEffect(() => {
         if (!ref.current) return;
+
+        // When the guess is complete, do not animate anymore
+        if (guessCompleted) {
+            ref.current.style.boxShadow = `0px 0px ${
+                (1 - 0.75) * 500
+            }px rgba(255, 255, 255, 0.4)`;
+            return;
+        }
 
         if (score === 0) {
             ref.current.style.boxShadow = `0px 0px 0px rgba(255, 255, 255, 0.4)`;
