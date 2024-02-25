@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-interface GuessSuccess {
+export interface GuessSuccess {
     name: boolean;
     artist: boolean;
     album: boolean;
 }
 
-interface GameSettings {
+export interface GameSettings {
     playerVolume: number;
 
     guessSuccess: GuessSuccess;

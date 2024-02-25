@@ -1,5 +1,12 @@
 import { Info } from "@mui/icons-material";
-import { Typography, CircularProgress, Alert, Input, Button } from "@mui/joy";
+import {
+    Typography,
+    CircularProgress,
+    Alert,
+    Input,
+    Button,
+    Grid,
+} from "@mui/joy";
 import JSConfetti from "js-confetti";
 import { useState, useRef, useEffect } from "react";
 import {
@@ -13,6 +20,7 @@ import { useSettings } from "../hooks/useSettings";
 import { useSpotify } from "../hooks/useSpotify";
 import InfoToast from "./InfoToast";
 import Player from "./Player";
+import SettingsDrawer from "./SettingsDrawer";
 
 const NAME_THRESHOLD = 0.97;
 const ARTIST_THRESHOLD = 0.97;
@@ -292,22 +300,34 @@ export default function SpotifyWidget() {
 
     return (
         <>
-            <Input
-                variant="solid"
-                color="neutral"
-                onChange={(e) => {
-                    setGuess(e.currentTarget.value);
-                }}
-                onKeyDown={(e) => {
-                    if (e.key == "Enter") {
-                        checkGuess();
-                    }
-                }}
-                placeholder="Guess the song"
-                value={guess}
-                size="lg"
-            />
-            <br />
+            <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+                <Grid xs={10}>
+                    <Input
+                        variant="solid"
+                        color="neutral"
+                        onChange={(e) => {
+                            setGuess(e.currentTarget.value);
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key == "Enter") {
+                                checkGuess();
+                            }
+                        }}
+                        placeholder="Guess the song"
+                        value={guess}
+                        size="lg"
+                        sx={{ mb: 2 }}
+                    />
+                </Grid>
+                <Grid xs={2}>
+                    <SettingsDrawer
+                        settings={settings.guessSuccess}
+                        onChange={(s) =>
+                            setSettings({ ...settings, guessSuccess: s })
+                        }
+                    />
+                </Grid>
+            </Grid>
             <Player
                 ref={ref}
                 title={track.name}
@@ -339,7 +359,6 @@ export default function SpotifyWidget() {
                     player?.setVolume(v);
                 }}
             />
-            <br />
             <Button
                 variant="solid"
                 color="neutral"

@@ -1,7 +1,6 @@
 import { Forward10, Pause, PlayArrow, Replay10 } from "@mui/icons-material";
 import {
     AspectRatio,
-    Box,
     Card,
     IconButton,
     Skeleton,
@@ -122,10 +121,10 @@ export default forwardRef<HTMLElement | null, PlayerParams>(function Player(
                 variant="soft"
                 sx={{
                     backgroundColor: "#FBFCFE10",
-                    width: 400,
+                    maxWidth: 400,
                     p: 3,
                     transition: "0.4s ease",
-                    mb: 4,
+                    mb: 2,
                 }}
                 className="gradient-animation"
             >
@@ -155,32 +154,35 @@ export default forwardRef<HTMLElement | null, PlayerParams>(function Player(
                     </Typography>
                 </Card>
             </Card>
-            <Stack
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                spacing={2}
-            >
-                <IconButton disabled size="sm" variant="plain">
-                    <Replay10 />
-                </IconButton>
-                <IconButton
-                    size="lg"
-                    variant="solid"
-                    sx={{ boxShadow: "0px 2px 5px rgba(0,0,0,0.3)" }}
-                    onClick={() =>
-                        params.isPlaying
-                            ? params.onChange("pause")
-                            : params.onChange("play")
-                    }
+            <Card variant="soft">
+                <Stack
+                    direction="row"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={2}
                 >
-                    {params.isPlaying ? <Pause /> : <PlayArrow />}
-                </IconButton>
-                <IconButton disabled size="sm" variant="plain">
-                    <Forward10 />
-                </IconButton>
-            </Stack>
-            <Box marginLeft={"25%"} width="50%">
+                    <IconButton disabled size="sm" variant="plain">
+                        <Replay10 />
+                    </IconButton>
+                    <IconButton
+                        size="lg"
+                        variant="solid"
+                        sx={{ boxShadow: "0px 2px 5px rgba(0,0,0,0.3)" }}
+                        onClick={() =>
+                            params.isPlaying
+                                ? params.onChange("pause")
+                                : params.onChange("play")
+                        }
+                    >
+                        {params.isPlaying ? <Pause /> : <PlayArrow />}
+                    </IconButton>
+                    <IconButton disabled size="sm" variant="plain">
+                        <Forward10 />
+                    </IconButton>
+                </Stack>
+            </Card>
+
+            <Stack sx={{ width: "50%", marginLeft: "25%" }}>
                 <Slider
                     value={volume}
                     min={0}
@@ -190,7 +192,7 @@ export default forwardRef<HTMLElement | null, PlayerParams>(function Player(
                     color="neutral"
                     onChange={(_, v) => setVolume(v as number)}
                 />
-            </Box>
+            </Stack>
         </>
     );
 });
